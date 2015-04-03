@@ -18,6 +18,7 @@ public class Main {
 	private static class Extractor implements ShardRegion.MessageExtractor {
 		@Override
 		public String entryId(Object message) {
+//			System.out.println("1> " + message);
 			if (message instanceof EntryEnvelope) {
 				return String.valueOf(((EntryEnvelope) message).id);
 			} else {
