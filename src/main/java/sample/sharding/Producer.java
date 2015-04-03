@@ -16,8 +16,7 @@ public class Producer extends UntypedActor {
 
 	private Random rand = new Random();
 	private Map<String, AtomicInteger> counter = new HashMap<>();
-	private static String[] uudis = { "9c23312f-2cf9-494b-9920-3e745791aa98", "6565fd58-e6b1-4a66-84b6-310f12e66f39",
-			"7122cc13-71c1-48f3-8391-db6e395bd0fd" };
+	private static String[] uudis = { "user-1", "user-2", "user-3" };
 
 	public Producer() {
 	}
@@ -29,7 +28,7 @@ public class Producer extends UntypedActor {
 	@Override
 	public void preStart() throws Exception {
 		getContext().system().scheduler()
-				.schedule(Duration.create(0, TimeUnit.SECONDS), Duration.create(3000, TimeUnit.MILLISECONDS), new Runnable() {
+				.schedule(Duration.create(0, TimeUnit.SECONDS), Duration.create(1000, TimeUnit.MILLISECONDS), new Runnable() {
 					@Override
 					public void run() {
 						getSelf().tell(new Tick(), getSelf());
@@ -40,7 +39,7 @@ public class Producer extends UntypedActor {
 	@Override
 	public void onReceive(Object arg0) throws Exception {
 		if (arg0 instanceof Tick) {
-			String id = uudis[rand.nextInt(3)];
+			String id = uudis[rand.nextInt(uudis.length)];
 			AtomicInteger count = counter.get(id);
 			if (count == null) {
 				count = new AtomicInteger(1);

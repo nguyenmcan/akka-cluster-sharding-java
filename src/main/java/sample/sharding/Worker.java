@@ -2,6 +2,7 @@ package sample.sharding;
 
 import java.io.Serializable;
 
+import sample.sharding.Consumer.JobWrapper;
 import akka.actor.UntypedActor;
 
 public class Worker extends UntypedActor {
@@ -9,24 +10,23 @@ public class Worker extends UntypedActor {
 	public static class TaskDone implements Serializable {
 		private static final long serialVersionUID = -5414439407575682893L;
 
-		public final String id;
+		public final JobWrapper job;
 
-		public TaskDone(String id) {
-			this.id = id;
+		public TaskDone(JobWrapper job) {
+			this.job = job;
 		}
 		
 		@Override
 		public String toString() {
-			return "Done Task: " + id;
+			return "Done Task > " + job;
 		}
 	}
 
 	@Override
 	public void onReceive(Object msg) throws Exception {
-		System.out.println(msg);
-		if (msg instanceof Job) {
-			System.out.println("Woker.process: " + msg);
-			sender().tell(new TaskDone(((Job) msg).id), getSelf());
+		if (msg instanceof JobWrapper) {
+//			System.out.println("Woker Process: " + msg);
+			sender().tell(new TaskDone(((JobWrapper) msg)), getSelf());
 		}
 	}
 

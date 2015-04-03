@@ -14,7 +14,7 @@ public class PersistentActorFailureExample {
 
 		@Override
 		public String persistenceId() {
-			return "sample-id-1";
+			return "sample-id-200";
 		}
 
 		private ArrayList<Object> received = new ArrayList<Object>();
@@ -26,15 +26,15 @@ public class PersistentActorFailureExample {
 			} else if (message.equals("print")) {
 				System.out.println("received " + received);
 			} else if (((String) message).startsWith("delete")) {
-				deleteMessages(Long.parseLong(((String) message).split("-")[1]));
+				deleteMessages(Long.parseLong(((String) message).split("-")[1]), true);
 			} else if (message instanceof String) {
 				String s = (String) message;
 				persist(s, new Procedure<String>() {
 					public void apply(String evt) throws Exception {
 						received.add(evt);
+						sequenceNr++;
 					}
 				});
-				sequenceNr++;
 			} else {
 				unhandled(message);
 			}
@@ -58,20 +58,20 @@ public class PersistentActorFailureExample {
 		final ActorSystem system = ActorSystem.create("example");
 		final ActorRef persistentActor = system.actorOf(Props.create(ExamplePersistentActor.class), "persistentActor-2");
 
-		// persistentActor.tell("a", null);
-		// persistentActor.tell("print", null);
-		// persistentActor.tell("boom", null);
-		// persistentActor.tell("print", null);
-		// persistentActor.tell("b", null);
-		// persistentActor.tell("print", null);
-		// persistentActor.tell("c", null);
-		// persistentActor.tell("print", null);
+//		 persistentActor.tell("a", null);
+//		 persistentActor.tell("print", null);
+//		 persistentActor.tell("boom", null);
+//		 persistentActor.tell("print", null);
+//		 persistentActor.tell("b", null);
+//		 persistentActor.tell("print", null);
+//		 persistentActor.tell("c", null);
+//		 persistentActor.tell("print", null);
 
-		persistentActor.tell("delete-1", null);
-		persistentActor.tell("boom", null);
-		persistentActor.tell("delete-2", null);
-		persistentActor.tell("boom", null);
-		persistentActor.tell("delete-3", null);
+//		persistentActor.tell("delete-1", null);
+//		persistentActor.tell("boom", null);
+//		persistentActor.tell("delete-2", null);
+//		persistentActor.tell("boom", null);
+//		persistentActor.tell("delete-3", null);
 
 		// Will print in a first run (i.e. with empty journal):
 
