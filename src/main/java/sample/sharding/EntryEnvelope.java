@@ -15,6 +15,6 @@ public class EntryEnvelope implements Serializable {
 
 	@Override
 	public String toString() {
-		return "{ EntryEnvelope:" + id + "} ";
+		return "{ EntryEnvelope:" + id + " }";
 	}
 }

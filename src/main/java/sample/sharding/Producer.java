@@ -29,7 +29,7 @@ public class Producer extends UntypedActor {
 	@Override
 	public void preStart() throws Exception {
 		getContext().system().scheduler()
-				.schedule(Duration.create(0, TimeUnit.SECONDS), Duration.create(1000, TimeUnit.MILLISECONDS), new Runnable() {
+				.schedule(Duration.create(0, TimeUnit.SECONDS), Duration.create(3000, TimeUnit.MILLISECONDS), new Runnable() {
 					@Override
 					public void run() {
 						getSelf().tell(new Tick(), getSelf());

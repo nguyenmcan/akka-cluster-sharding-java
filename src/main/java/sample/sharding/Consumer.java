@@ -4,9 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.netty.channel.socket.Worker;
-
-import sample.sharding.Woker.TaskDone;
+import sample.sharding.Worker.TaskDone;
 import scala.concurrent.duration.Duration;
 import akka.actor.ActorRef;
 import akka.actor.PoisonPill;
@@ -20,31 +18,30 @@ import akka.persistence.UntypedPersistentActor;
 public class Consumer extends UntypedPersistentActor {
 
 	private ActorRef workerRef;
-	private EntryEnvelope currentTask;
-	private Queue<EntryEnvelope> peddingTasks = new LinkedList<EntryEnvelope>();
+	private Job currentTask;
+	private Queue<Job> peddingTasks = new LinkedList<Job>();
 
 	@Override
 	public String persistenceId() {
-		System.out.println(getSelf().path().name());
 		return getSelf().path().parent().parent().name() + "-" + getSelf().path().name();
 	}
 
 	@Override
 	public void preStart() throws Exception {
 		super.preStart();
-		workerRef = context().actorOf(Props.create(Worker.class));
+		workerRef = context().actorOf(Props.create(Worker.class).withDispatcher("worker-dispatcher"));
 		context().watch(workerRef);
 		context().setReceiveTimeout(Duration.create(120, TimeUnit.SECONDS));
 	}
 
-	void updateTasks(EntryEnvelope task) {
+	void updateTasks(Job task) {
 		peddingTasks.offer(task);
 	}
 
 	@Override
 	public void onReceiveRecover(Object msg) {
-		if (msg instanceof EntryEnvelope) {
-			updateTasks((EntryEnvelope) msg);
+		if (msg instanceof Job) {
+			updateTasks((Job) msg);
 		} else {
 			unhandled(msg);
 		}
@@ -52,10 +49,9 @@ public class Consumer extends UntypedPersistentActor {
 
 	@Override
 	public void onReceiveCommand(Object msg) {
-		System.out.println("onReceiveCommand" + msg);
-		if (msg instanceof EntryEnvelope) {
-			persist((EntryEnvelope) msg, new Procedure<EntryEnvelope>() {
-				public void apply(EntryEnvelope evt) {
+		if (msg instanceof Job) {
+			persist((Job) msg, new Procedure<Job>() {
+				public void apply(Job evt) {
 					if (currentTask == null) {
 						currentTask = evt;
 						workerRef.tell(currentTask, getSelf());
@@ -64,16 +60,15 @@ public class Consumer extends UntypedPersistentActor {
 					}
 				}
 			});
-			System.out.println("Update Task List!");
+			System.out.println(String.format("Update task list for %s! total:%s", ((Job) msg).id, peddingTasks.size()));
 		} else if (msg instanceof TaskDone) {
 			currentTask = peddingTasks.poll();
 			if (currentTask != null) {
 				workerRef.tell(currentTask, getSelf());
 			}
-			System.out.println(msg);
 		} else if (msg instanceof Terminated) {
 			if (currentTask != null) {
-				workerRef = context().actorOf(Props.create(Worker.class));
+				workerRef = context().actorOf(Props.create(Worker.class).withDispatcher("worker-dispatcher"));
 				context().watch(workerRef);
 				workerRef.tell(currentTask, getSelf());
 			}
