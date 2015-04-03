@@ -111,7 +111,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT [provided][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies default#akka-cluster-sharding-java-build;0.1-SNAPSHOT->org.scala-lang#scala-library;2.10.4 [provided->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.10.4 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@b1d518[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@9fdea9[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.10.4[0m
 [0m[[0mdebug[0m] [0m	typesafe-ivy-releases: revision in cache: org.scala-lang#scala-library;2.10.4[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.10.4 in sbt-chain[0m
@@ -1515,7 +1515,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-sbt#apply-macro;0.13.5!apply-macro.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#jline;2.10.4!jline.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.fusesource.jansi#jansi;1.4!jansi.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 4150ms :: artifacts dl 182ms[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 3110ms :: artifacts dl 218ms[0m
 [0m[[0mdebug[0m] [0m	report for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT compile produced in /home/gnt/workspace/projects/research/akka-cluster-sharding-java/project/target/resolution-cache/reports/default-akka-cluster-sharding-java-build-compile.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT runtime produced in /home/gnt/workspace/projects/research/akka-cluster-sharding-java/project/target/resolution-cache/reports/default-akka-cluster-sharding-java-build-runtime.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT test produced in /home/gnt/workspace/projects/research/akka-cluster-sharding-java/project/target/resolution-cache/reports/default-akka-cluster-sharding-java-build-test.xml[0m
@@ -1529,5 +1529,5 @@
 [0m[[0mdebug[0m] [0m	report for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT docs produced in /home/gnt/workspace/projects/research/akka-cluster-sharding-java/project/target/resolution-cache/reports/default-akka-cluster-sharding-java-build-docs.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT pom produced in /home/gnt/workspace/projects/research/akka-cluster-sharding-java/project/target/resolution-cache/reports/default-akka-cluster-sharding-java-build-pom.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#akka-cluster-sharding-java-build;0.1-SNAPSHOT scala-tool produced in /home/gnt/workspace/projects/research/akka-cluster-sharding-java/project/target/resolution-cache/reports/default-akka-cluster-sharding-java-build-scala-tool.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (4150ms resolve - 182ms download)[0m
+[0m[[0mdebug[0m] [0m	resolve done (3110ms resolve - 218ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

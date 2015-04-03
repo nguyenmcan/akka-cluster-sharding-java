@@ -4,7 +4,7 @@
 		module="akka-cluster-sharding-java-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20150327130701"
+		publication="20150401143702"
 		e:scalaVersion="2.10" e:sbtVersion="0.13"
 	>
 		<description>

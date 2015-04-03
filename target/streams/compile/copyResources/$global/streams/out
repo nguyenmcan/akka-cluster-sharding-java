@@ -1,4 +1,5 @@
 [0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(/home/gnt/workspace/projects/research/akka-cluster-sharding-java/src/main/resources/node3.conf,/home/gnt/workspace/projects/research/akka-cluster-sharding-java/target/scala-2.10/classes/node3.conf)[0m
 [0m[[0mdebug[0m] [0m	(/home/gnt/workspace/projects/research/akka-cluster-sharding-java/src/main/resources/common.conf,/home/gnt/workspace/projects/research/akka-cluster-sharding-java/target/scala-2.10/classes/common.conf)[0m
 [0m[[0mdebug[0m] [0m	(/home/gnt/workspace/projects/research/akka-cluster-sharding-java/src/main/resources/node2.conf,/home/gnt/workspace/projects/research/akka-cluster-sharding-java/target/scala-2.10/classes/node2.conf)[0m
 [0m[[0mdebug[0m] [0m	(/home/gnt/workspace/projects/research/akka-cluster-sharding-java/src/main/resources/node1.conf,/home/gnt/workspace/projects/research/akka-cluster-sharding-java/target/scala-2.10/classes/node1.conf)[0m

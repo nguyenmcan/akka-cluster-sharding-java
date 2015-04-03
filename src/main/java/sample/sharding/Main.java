@@ -6,19 +6,21 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.contrib.pattern.ClusterSharding;
 import akka.contrib.pattern.ShardRegion;
+import akka.persistence.journal.leveldb.SharedLeveldbStore;
 
 import com.typesafe.config.ConfigFactory;
 
 public class Main {
 
+	public static final String ActorSystemName = "ShardingSystem";
+	public static final String ShardingName = "ShardingActor";
+
 	private static class Extractor implements ShardRegion.MessageExtractor {
 		@Override
 		public String entryId(Object message) {
-			System.out.println("EntryId: " + message);
-			if (message instanceof Counter.EntryEnvelope) {
-				return String.valueOf(((Counter.EntryEnvelope) message).id);
-			} else if (message instanceof Counter.Get) {
-				return String.valueOf(((Counter.Get) message).counterId);
+			System.out.println("1> " + message);
+			if (message instanceof EntryEnvelope) {
+				return String.valueOf(((EntryEnvelope) message).id);
 			} else {
 				return null;
 			}
@@ -26,22 +28,16 @@ public class Main {
 
 		@Override
 		public Object entryMessage(Object message) {
-			System.out.println("EntryMessage: " + message);
-			if (message instanceof Counter.EntryEnvelope)
-				return ((Counter.EntryEnvelope) message).payload;
-			else
-				return message;
+			System.out.println("2> " + message);
+			return message;
 		}
 
 		@Override
 		public String shardId(Object message) {
-			System.out.println("ShardId: " + message);
-			int numberOfShards = 2;
-			if (message instanceof Counter.EntryEnvelope) {
-				long id = ((Counter.EntryEnvelope) message).id;
-				return String.valueOf(id % numberOfShards);
-			} else if (message instanceof Counter.Get) {
-				long id = ((Counter.Get) message).counterId;
+			int numberOfShards = 100;
+			System.out.println("3> " +message);
+			if (message instanceof EntryEnvelope) {
+				long id = Math.abs(((EntryEnvelope) message).id.hashCode());
 				return String.valueOf(id % numberOfShards);
 			} else {
 				return null;
@@ -56,9 +52,19 @@ public class Main {
 	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
-		ActorSystem system = ActorSystem.create("cluster-system", ConfigFactory.load(args[0]));
+		ActorSystem system = ActorSystem.create(ActorSystemName, ConfigFactory.load(args[0]));
 		system.actorOf(Props.create(ClusterStatus.class));
-		ClusterSharding.get(system).start("Counter", Props.create(Counter.class), new Extractor());
-		system.actorOf(Props.create(Pusher.class, args[0]));
+
+		ClusterSharding.get(system).start(ShardingName, Props.create(Consumer.class), new Extractor());
+
+		if ("node1".equals(args[0])) {
+			system.actorOf(Props.create(SharedLeveldbStore.class), "store");
+		}
+
+		system.actorOf(Props.create(SharedStorageUsage.class));
+
+		if ("node2".equals(args[0])) {
+			system.actorOf(Props.create(Producer.class));
+		}
 	}
 }

@@ -2,10 +2,10 @@ package sample.sharding;
 
 import akka.actor.UntypedActor;
 import akka.cluster.Cluster;
-import akka.cluster.Member;
 import akka.cluster.ClusterEvent.ClusterDomainEvent;
 import akka.cluster.ClusterEvent.MemberRemoved;
 import akka.cluster.ClusterEvent.MemberUp;
+import akka.cluster.Member;
 
 public class ClusterStatus extends UntypedActor {
 
