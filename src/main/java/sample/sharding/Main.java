@@ -54,19 +54,20 @@ public class Main {
 	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
-		ActorSystem system = ActorSystem.create(ActorSystemName, ConfigFactory.load(args[0]));
+		ActorSystem system = ActorSystem.create(ActorSystemName, ConfigFactory.load("node2"));
 		system.actorOf(Props.create(ClusterStatus.class));
 
 		ClusterSharding.get(system).start(ShardingName, Props.create(Consumer.class), new Extractor());
 
-		if ("node1".equals(args[0])) {
+//		if ("node1".equals(args[0])) {
 			system.actorOf(Props.create(SharedLeveldbStore.class), "store");
-		}
+//		}
 
 		system.actorOf(Props.create(SharedStorageUsage.class));
 
-		if ("node2".equals(args[0])) {
+//		if ("node2".equals(args[0])) {
 			system.actorOf(Props.create(Producer.class));
-		}
+//		}
+		
 	}
 }

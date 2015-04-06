@@ -82,7 +82,6 @@ public class Consumer extends UntypedPersistentActor {
 					}
 				}
 			});
-			sender().tell(msg, sender);
 //			System.out.println(String.format(">> Update task list for %s! total:%s", ((Job) msg).id, peddingTasks.size()));
 		} else if (msg instanceof TaskDone) {
 //			deleteMessages(((TaskDone) msg).job.index, false);
