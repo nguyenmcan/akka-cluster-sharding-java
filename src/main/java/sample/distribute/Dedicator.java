@@ -12,6 +12,9 @@ import akka.actor.PoisonPill;
 import akka.actor.Props;
 import akka.actor.Terminated;
 import akka.japi.Procedure;
+import akka.persistence.SaveSnapshotFailure;
+import akka.persistence.SaveSnapshotSuccess;
+import akka.persistence.SnapshotOffer;
 import akka.persistence.UntypedPersistentActor;
 
 public class Dedicator extends UntypedPersistentActor {
@@ -26,10 +29,13 @@ public class Dedicator extends UntypedPersistentActor {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onReceiveRecover(Object arg0) throws Exception {
 		System.out.println("Recover: " + arg0);
 		if (arg0 instanceof Task) {
 			taskQueue.offer((Task) arg0);
+		} else if (arg0 instanceof SnapshotOffer) {
+			taskQueue = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
 		}
 	}
 
@@ -49,6 +55,9 @@ public class Dedicator extends UntypedPersistentActor {
 					}
 				}
 			});
+			if (taskQueue.size() % 10 == 0) {
+				saveSnapshot(taskQueue);
+			}
 		} else if (arg0 instanceof TaskDone) {
 			currentTask = taskQueue.poll();
 			if (currentTask != null) {
@@ -59,11 +68,16 @@ public class Dedicator extends UntypedPersistentActor {
 			System.out.println("Task Done!");
 		} else if (arg0 instanceof Terminated) {
 			ActorRef actorRef2 = ((Terminated) arg0).actor();
-			if (actorRef2 == actorRef) {
+			if (actorRef2 == actorRef && currentTask != null) {
 				actorRef = context().actorOf(Props.create(Worker.class).withDispatcher("worker-dispatcher"));
 				context().watch(actorRef);
 				actorRef.tell(currentTask, getSelf());
 			}
+		} else if (arg0 instanceof SaveSnapshotSuccess) {
+			deleteMessages(((SaveSnapshotSuccess) arg0).metadata().sequenceNr(), false);
+			System.out.println("SaveSnapshotSuccess");
+		} else if (arg0 instanceof SaveSnapshotFailure) {
+			System.out.println("SaveSnapshotFailure");
 		} else {
 			System.out.println("Deditator Unhandle: " + arg0);
 		}
