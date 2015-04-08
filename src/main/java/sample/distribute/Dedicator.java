@@ -9,10 +9,11 @@ import scala.concurrent.duration.Duration;
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.DeadLetter;
+import akka.actor.PoisonPill;
 import akka.actor.Props;
+import akka.actor.ReceiveTimeout;
 import akka.japi.Procedure;
 import akka.persistence.SaveSnapshotSuccess;
-import akka.persistence.SnapshotOffer;
 import akka.persistence.UntypedPersistentActor;
 
 public class Dedicator extends UntypedPersistentActor {
@@ -29,9 +30,7 @@ public class Dedicator extends UntypedPersistentActor {
 
 		context().system().eventStream().subscribe(self(), DeadLetter.class);
 
-		context().setReceiveTimeout(Duration.create(60, TimeUnit.SECONDS));
-
-		System.out.println(">>>>>>>>>>> " + context().props().mailbox());
+		context().setReceiveTimeout(Duration.create(5, TimeUnit.SECONDS));
 	}
 
 	@Override
@@ -40,26 +39,21 @@ public class Dedicator extends UntypedPersistentActor {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onReceiveRecover(Object arg0) throws Exception {
-		System.out.println("Recover: " + arg0);
-		if (arg0 instanceof Task) {
-			taskQueue.offer((Task) arg0);
-		} else if (arg0 instanceof SnapshotOffer) {
-			taskQueue = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
-		}
+//		if (arg0 instanceof Task) {
+//			taskQueue.offer((Task) arg0);
+//		} else if (arg0 instanceof SnapshotOffer) {
+//			taskQueue = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
+//		}
 	}
 
 	@Override
 	public void onReceiveCommand(Object arg0) throws Exception {
-		System.out.println("Dedicator Msg: " + arg0);
 		if (arg0 instanceof Task) {
-			System.out.println("Dedicator Thread ID: " + Thread.currentThread().getId());
 			persist((Task) arg0, new Procedure<Task>() {
 				@Override
 				public void apply(Task arg0) throws Exception {
 					taskQueue.offer((Task) arg0);
-					System.out.println("Queue Size: " + taskQueue.size());
 					if (currentTask == null) {
 						currentTask = taskQueue.poll();
 						router.tell(currentTask, getSelf());
@@ -74,15 +68,33 @@ public class Dedicator extends UntypedPersistentActor {
 			if (currentTask != null) {
 				router.tell(currentTask, getSelf());
 			}
-			System.out.println("Task Done! " + ((TaskDone) arg0).task + " > " + sender().path());
+			System.out.println("Task Done! " + ((TaskDone) arg0).task);
+		} else if (arg0 instanceof ReceiveTimeout) {
+			if (currentTask != null) {
+				router.tell(currentTask, getSelf());
+				System.out.println("[ReceiveTimeout] Retry send message: " + currentTask);
+			} else {
+				self().tell(PoisonPill.getInstance(), getSelf());
+				System.out.println("[ReceiveTimeout] Stop Actor!");
+			}
 		} else if (arg0 instanceof DeadLetter) {
 			if (((DeadLetter) arg0).message() == currentTask) {
-				router.tell(currentTask, getSelf());
-				System.out.println("Retry send message: " + ((DeadLetter) arg0).message());
+				context().system().scheduler().scheduleOnce(Duration.create(1000, TimeUnit.MILLISECONDS), new Runnable() {
+					@Override
+					public void run() {
+						router.tell(currentTask, getSelf());
+						System.out.println("[DeadLetter] Retry send message: " + currentTask);
+					}
+				}, context().dispatcher());
 			}
 		} else if (arg0 instanceof SaveSnapshotSuccess) {
 			deleteMessages(((SaveSnapshotSuccess) arg0).metadata().sequenceNr(), false);
 		}
+	}
+
+	@Override
+	public void postStop() {
+		super.postStop();
 	}
 
 	/**

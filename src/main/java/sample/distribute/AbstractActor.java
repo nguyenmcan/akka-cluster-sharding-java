@@ -18,7 +18,6 @@ public abstract class AbstractActor extends UntypedActor {
 					Duration.create(10000, TimeUnit.MILLISECONDS));
 			return result;
 		} catch (Exception e) {
-			System.err.println(">>>>" + e.getMessage());
 			try {
 				return context().system().actorOf(Props.create(Dedicator.class).withDispatcher(dispatcher), actorName);
 			} catch (Exception e2) {
