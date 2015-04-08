@@ -21,6 +21,7 @@ public class Dedicator extends UntypedPersistentActor {
 	private Task currentTask = null;
 	private Queue<Task> taskQueue = new LinkedList<Task>();
 	private ActorRef router = null;
+	private ActorRef parentRef = null;
 
 	@Override
 	public void preStart() throws Exception {
@@ -63,11 +64,13 @@ public class Dedicator extends UntypedPersistentActor {
 			if (taskQueue.size() % 10 == 0) {
 				saveSnapshot(taskQueue);
 			}
+			parentRef = getSender();
 		} else if (arg0 instanceof TaskDone) {
 			currentTask = taskQueue.poll();
 			if (currentTask != null) {
 				router.tell(currentTask, getSelf());
 			}
+			parentRef.tell(arg0, getSelf());
 			System.out.println("Task Done! " + ((TaskDone) arg0).task);
 		} else if (arg0 instanceof ReceiveTimeout) {
 			if (currentTask != null) {

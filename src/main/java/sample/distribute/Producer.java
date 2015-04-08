@@ -11,6 +11,7 @@ import akka.actor.ActorRef;
 public class Producer extends AbstractActor {
 
 	private AtomicInteger counter = new AtomicInteger();
+	private AtomicInteger remainTask = new AtomicInteger();
 
 	public Producer() {
 	}
@@ -37,7 +38,11 @@ public class Producer extends AbstractActor {
 			ActorRef actorRef = getActorRef(Dedicator.class, "/user/" + id, id, "dedicator-dispatcher");
 			Task task = new Task(id, counter.incrementAndGet());
 			actorRef.tell(task, getSelf());
+			remainTask.incrementAndGet();
 //			System.out.println(">>> Push: " + task);
+		} else if(arg0 instanceof TaskDone) {
+			System.out.println(">>> Remain task: " + remainTask.decrementAndGet());
 		}
+		
 	}
 }
