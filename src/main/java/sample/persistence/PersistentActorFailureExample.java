@@ -2,6 +2,7 @@ package sample.persistence;
 
 import java.util.ArrayList;
 
+import scala.Option;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
@@ -14,11 +15,21 @@ public class PersistentActorFailureExample {
 
 		@Override
 		public String persistenceId() {
-			return "sample-id-200";
+			return "sample-id-700";
 		}
 
 		private ArrayList<Object> received = new ArrayList<Object>();
 
+		@Override
+		public void preRestart(Throwable reason, Option<Object> message) {
+		}
+		
+		@Override
+		public void preStart() throws Exception {
+			System.out.println(">>>>>>>>>>>>");
+			super.preStart();
+		}
+		
 		@Override
 		public void onReceiveCommand(Object message) throws Exception {
 			if (message.equals("boom")) {
@@ -58,12 +69,12 @@ public class PersistentActorFailureExample {
 		final ActorSystem system = ActorSystem.create("example");
 		final ActorRef persistentActor = system.actorOf(Props.create(ExamplePersistentActor.class), "persistentActor-2");
 
-//		 persistentActor.tell("a", null);
-//		 persistentActor.tell("print", null);
-//		 persistentActor.tell("boom", null);
-//		 persistentActor.tell("print", null);
-//		 persistentActor.tell("b", null);
-//		 persistentActor.tell("print", null);
+		 persistentActor.tell("a", null);
+		 persistentActor.tell("print", null);
+		 persistentActor.tell("boom", null);
+		 persistentActor.tell("print", null);
+		 persistentActor.tell("b", null);
+		 persistentActor.tell("print", null);
 //		 persistentActor.tell("c", null);
 //		 persistentActor.tell("print", null);
 

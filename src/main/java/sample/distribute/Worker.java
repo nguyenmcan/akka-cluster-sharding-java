@@ -1,23 +1,20 @@
 package sample.distribute;
 
-import java.util.concurrent.TimeUnit;
-
-import scala.concurrent.duration.Duration;
 import akka.actor.UntypedActor;
 
 public class Worker extends UntypedActor {
 
 	@Override
 	public void preStart() throws Exception {
-		context().setReceiveTimeout(Duration.create(120, TimeUnit.SECONDS));
 	}
 
 	@Override
 	public void onReceive(Object arg0) throws Exception {
+		System.out.println("Thread ID: " + Thread.currentThread().getId());
 		if (arg0 instanceof Task) {
 			System.out.println("Proccess: " + arg0 + " (" + self().path() + ")");
-			Thread.sleep(5000);
-			sender().tell(new TaskDone(), getSelf());
+			sender().tell(new TaskDone((Task) arg0), getSelf());
+			Thread.sleep(10000);
 		}
 	}
 

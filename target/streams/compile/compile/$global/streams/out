@@ -16,10 +16,10 @@
 [0m[[0minfo[0m] [0mCompiling 1 Java source to /home/gnt/workspace/projects/research/akka-cluster-sharding-java/target/scala-2.10/classes...[0m
 [0m[[0mdebug[0m] [0mAttempting to call javac directly...[0m
 [0m[[0mdebug[0m] [0mcom.sun.tools.javac.Main not found with appropriate method signature; forking javac instead[0m
-[0m[[0mdebug[0m] [0mForking javac: javac @/tmp/sbt_c1dce981/argfile[0m
+[0m[[0mdebug[0m] [0mForking javac: javac @/tmp/sbt_b5d9ae7e/argfile[0m
 [0m[[0mdebug[0m] [0mjavac returned exit code: 0[0m
-[0m[[0mdebug[0m] [0mJava compilation took 1.408949587 s[0m
-[0m[[0mdebug[0m] [0mJava analysis took 0.206408645 s[0m
+[0m[[0mdebug[0m] [0mJava compilation took 0.584893788 s[0m
+[0m[[0mdebug[0m] [0mJava analysis took 0.098383244 s[0m
 [0m[[0mdebug[0m] [0mNew invalidations:[0m
 [0m[[0mdebug[0m] [0m	Set()[0m
 [0m[[0mdebug[0m] [0mInitial set of included nodes: Set()[0m
