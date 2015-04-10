@@ -14,7 +14,7 @@ public class Worker extends UntypedActor {
 		if (arg0 instanceof Task) {
 			System.out.println("Proccess: " + arg0 + " (" + self().path() + ")");
 			sender().tell(new TaskDone((Task) arg0), getSelf());
-			Thread.sleep(500);
+			Thread.sleep(5000);
 		}
 	}
 

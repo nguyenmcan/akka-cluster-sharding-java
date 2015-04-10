@@ -31,7 +31,7 @@ public class Dedicator extends UntypedPersistentActor {
 
 		context().system().eventStream().subscribe(self(), DeadLetter.class);
 
-		context().setReceiveTimeout(Duration.create(5, TimeUnit.SECONDS));
+		context().setReceiveTimeout(Duration.create(60, TimeUnit.SECONDS));
 	}
 
 	@Override
@@ -51,6 +51,7 @@ public class Dedicator extends UntypedPersistentActor {
 	@Override
 	public void onReceiveCommand(Object arg0) throws Exception {
 		if (arg0 instanceof Task) {
+			System.out.println("Receive Task!");
 			persist((Task) arg0, new Procedure<Task>() {
 				@Override
 				public void apply(Task arg0) throws Exception {
