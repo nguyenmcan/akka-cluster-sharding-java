@@ -41,11 +41,11 @@ public class Dedicator extends UntypedPersistentActor {
 
 	@Override
 	public void onReceiveRecover(Object arg0) throws Exception {
-//		if (arg0 instanceof Task) {
-//			taskQueue.offer((Task) arg0);
-//		} else if (arg0 instanceof SnapshotOffer) {
-//			taskQueue = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
-//		}
+		// if (arg0 instanceof Task) {
+		// taskQueue.offer((Task) arg0);
+		// } else if (arg0 instanceof SnapshotOffer) {
+		// taskQueue = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
+		// }
 	}
 
 	@Override
@@ -73,6 +73,9 @@ public class Dedicator extends UntypedPersistentActor {
 			}
 			parentRef.tell(arg0, getSelf());
 			System.out.println("Task Done! " + ((TaskDone) arg0).task);
+		} else if (arg0 instanceof RetryTask) {
+			router.tell(((RetryTask) arg0).task, getSelf());
+			System.out.println("[RetryTask] Retry send message: " + ((RetryTask) arg0).task);
 		} else if (arg0 instanceof ReceiveTimeout) {
 			if (currentTask != null) {
 				router.tell(currentTask, getSelf());
