@@ -14,13 +14,13 @@ public class Worker extends UntypedActor {
 		if (arg0 instanceof Task) {
 			System.out.println("Proccess: " + arg0 + " (" + self().path() + ")");
 			sender().tell(new TaskDone((Task) arg0), getSelf());
-			Thread.sleep(5000);
 		}
 	}
 
 	@Override
 	public void postStop() throws Exception {
 		super.postStop();
+		System.out.println(">>>>>>>>>>>>>>>postStop!");
 	}
 
 }

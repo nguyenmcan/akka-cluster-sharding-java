@@ -31,7 +31,7 @@ public class Dedicator extends UntypedPersistentActor {
 
 		context().system().eventStream().subscribe(self(), DeadLetter.class);
 
-		context().setReceiveTimeout(Duration.create(60, TimeUnit.SECONDS));
+		context().setReceiveTimeout(Duration.create(30, TimeUnit.SECONDS));
 	}
 
 	@Override
