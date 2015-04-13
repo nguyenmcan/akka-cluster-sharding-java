@@ -39,8 +39,6 @@ public class Producer extends AbstractActor {
 			actorRef.tell(task, getSelf());
 			remainTask.incrementAndGet();
 			System.out.println(">>> Push: " + task);
-		} else if (arg0 instanceof End) {
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>END!");
 		} else if (arg0 instanceof TaskDone) {
 			System.out.println(">>> Remain task: " + remainTask.decrementAndGet());
 		}

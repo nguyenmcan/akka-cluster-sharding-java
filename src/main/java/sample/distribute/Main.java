@@ -1,6 +1,7 @@
 package sample.distribute;
 
 import akka.actor.ActorSystem;
+import akka.actor.PoisonPill;
 import akka.actor.Props;
 import akka.contrib.pattern.ClusterSingletonManager;
 import akka.routing.FromConfig;
@@ -19,7 +20,7 @@ public class Main {
 
 		system.actorOf(
 				ClusterSingletonManager.defaultProps(Props.create(Producer.class).withDispatcher("producer-dispatcher"), "producer",
-						new End(), ""), "producer-manager");
+						PoisonPill.getInstance(), ""), "producer-manager");
 	}
 
 }
