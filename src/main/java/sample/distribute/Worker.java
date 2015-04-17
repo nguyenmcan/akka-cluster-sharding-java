@@ -13,6 +13,10 @@ public class Worker extends UntypedActor {
 	public void onReceive(Object arg0) throws Exception {
 		if (arg0 instanceof Task) {
 			try {
+				if(((Task) arg0).isTimeOut()) {
+					// message timeout
+					return;
+				}
 				System.out.println("Proccess: " + arg0 + " (" + self().path() + ")");
 				sender().tell(new TaskDone((Task) arg0), getSelf());
 			} catch (UnsupportedOperationException e) {

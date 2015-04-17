@@ -21,7 +21,7 @@ public class RetryTask implements Serializable, ConsistentHashable {
 
 	@Override
 	public Object consistentHashKey() {
-		return this.task.id;
+		return this.task.getId();
 	}
 
 }

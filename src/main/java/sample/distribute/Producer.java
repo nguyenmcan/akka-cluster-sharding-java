@@ -32,13 +32,13 @@ public class Producer extends AbstractActor {
 
 	@Override
 	public void onReceive(Object arg0) throws Exception {
-		if (arg0 instanceof Tick && counter.get() <= 10) {
-			String id = UUID.randomUUID().toString();
-			ActorRef actorRef = getActorRef(Dedicator.class, "/user/" + id, id, "dedicator-dispatcher");
+		if (arg0 instanceof Tick) {
+			String id = /*UUID.randomUUID().toString()*/ "8d95a0e1-ae69-43eb-992f-39a00e3d556e";
+			ActorRef actorRef = getActorRef(QueueActor.class, "/user/producer-manager/producer/" + id, id, "dedicator-dispatcher");
 			Task task = new Task(id, counter.incrementAndGet());
 			actorRef.tell(task, getSelf());
 			remainTask.incrementAndGet();
-			System.out.println(">>> Push: " + task);
+			System.out.println(">>> Push: " + task + " (" + self().path() + " )");
 		} else if (arg0 instanceof TaskDone) {
 			System.out.println(">>> Remain task: " + remainTask.decrementAndGet());
 		}

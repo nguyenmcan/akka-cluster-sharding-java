@@ -4,7 +4,7 @@
 		module="akka-cluster-sharding-java_2.10"
 		revision="1.0"
 		status="integration"
-		publication="20150408105120"
+		publication="20150414174522"
 	>
 		<description>
 		akka-cluster-sharding-java
@@ -24,6 +24,7 @@
 		<conf name="docs" visibility="public" description=""/>
 		<conf name="pom" visibility="public" description=""/>
 		<conf name="scala-tool" visibility="private" description=""/>
+		<conf name="aspectj" visibility="private" description=""/>
 	</configurations>
 	<publications>
 		<artifact name="akka-cluster-sharding-java_2.10" type="pom" ext="pom" conf="pom"/>
@@ -35,5 +36,12 @@
 		<dependency org="org.scala-lang" name="scala-compiler" rev="2.10.4" conf="scala-tool->default,optional(default)"/>
 		<dependency org="org.scala-lang" name="scala-library" rev="2.10.4" conf="scala-tool->default,optional(default);compile->default(compile)"/>
 		<dependency org="com.typesafe.akka" name="akka-contrib_2.10" rev="2.3.4" conf="compile->default(compile)"/>
+		<dependency org="io.kamon" name="kamon-core_2.10" rev="0.3.5" conf="compile->default(compile)"/>
+		<dependency org="io.kamon" name="kamon-log-reporter_2.10" rev="0.3.5" conf="compile->default(compile)"/>
+		<dependency org="io.kamon" name="kamon-system-metrics_2.10" rev="0.3.5" conf="compile->default(compile)"/>
+		<dependency org="org.aspectj" name="aspectjweaver" rev="1.8.4" conf="compile->default(compile)"/>
+		<dependency org="org.aspectj" name="aspectjtools" rev="1.7.3" conf="aspectj->default(compile)"/>
+		<dependency org="org.aspectj" name="aspectjweaver" rev="1.7.3" conf="aspectj->default(compile)"/>
+		<dependency org="org.aspectj" name="aspectjrt" rev="1.7.3" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

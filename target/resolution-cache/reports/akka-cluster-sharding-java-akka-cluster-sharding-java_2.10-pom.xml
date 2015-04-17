@@ -6,8 +6,8 @@
 		module="akka-cluster-sharding-java_2.10"
 		revision="1.0"
 		conf="pom"
-		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool"
-		date="20150408105120"/>
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool, aspectj"
+		date="20150414174522"/>
 	<dependencies>
 	</dependencies>
 </ivy-report>

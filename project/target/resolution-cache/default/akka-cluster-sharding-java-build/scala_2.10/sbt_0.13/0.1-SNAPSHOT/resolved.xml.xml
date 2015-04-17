@@ -4,7 +4,7 @@
 		module="akka-cluster-sharding-java-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20150408093652"
+		publication="20150414174512"
 		e:scalaVersion="2.10" e:sbtVersion="0.13"
 	>
 		<description>
@@ -37,5 +37,6 @@
 		<dependency org="org.scala-lang" name="scala-library" rev="2.10.4" conf="scala-tool->default,optional(default);provided->default(compile)"/>
 		<dependency org="org.scala-sbt" name="sbt" rev="0.13.5" conf="provided->default(compile)"/>
 		<dependency org="com.typesafe.sbteclipse" name="sbteclipse-plugin" rev="3.0.0" conf="compile->default(compile)" e:scalaVersion="2.10" e:sbtVersion="0.13"/>
+		<dependency org="com.typesafe.sbt" name="sbt-aspectj" rev="0.9.4" conf="compile->default(compile)" e:scalaVersion="2.10" e:sbtVersion="0.13"/>
 	</dependencies>
 </ivy-module>
