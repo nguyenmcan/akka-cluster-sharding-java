@@ -34,7 +34,7 @@ public class Producer extends AbstractActor {
 	public void onReceive(Object arg0) throws Exception {
 		if (arg0 instanceof Tick) {
 			String id = /*UUID.randomUUID().toString()*/ "8d95a0e1-ae69-43eb-992f-39a00e3d556e";
-			ActorRef actorRef = getActorRef(QueueActor.class, "/user/producer-manager/producer/" + id, id, "dedicator-dispatcher");
+			ActorRef actorRef = getActorRef(TaskManager.class, "/user/producer-manager/producer/" + id, id, "dedicator-dispatcher");
 			Task task = new Task(id, counter.incrementAndGet());
 			actorRef.tell(task, getSelf());
 			remainTask.incrementAndGet();

@@ -19,7 +19,7 @@ public abstract class AbstractActor extends UntypedActor {
 			return result;
 		} catch (Exception e) {
 			try {
-				return context().actorOf(Props.create(QueueActor.class).withDispatcher(dispatcher), actorName);
+				return context().actorOf(Props.create(TaskManager.class).withDispatcher(dispatcher), actorName);
 			} catch (Exception e2) {
 				System.err.println(">>>>" + e2.getMessage());
 				return null;

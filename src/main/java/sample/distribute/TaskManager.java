@@ -4,37 +4,28 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import scala.concurrent.Await;
-import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.DeadLetter;
 import akka.actor.PoisonPill;
 import akka.actor.Props;
 import akka.actor.ReceiveTimeout;
 import akka.actor.Terminated;
 import akka.japi.Procedure;
-import akka.pattern.Patterns;
 import akka.persistence.SaveSnapshotSuccess;
 import akka.persistence.UntypedPersistentActor;
-import akka.routing.CurrentRoutees;
-import akka.routing.GetRoutees;
 
-public class QueueActor extends UntypedPersistentActor {
+public class TaskManager extends UntypedPersistentActor {
 
 	private Task currentTask = null;
-	private Queue<Task> taskQueue = new LinkedList<Task>();
-	private ActorRef router = null;
-	private ActorRef masterRef = null;
+	private Queue<Task> taskList = new LinkedList<Task>();
+	private ActorRef taskExecuter = null;
 
 	@Override
 	public void preStart() throws Exception {
 		super.preStart();
 
-		router = getActorRef(Worker.class, "/user/router1", "router1", "router-dispatcher");
-
-		context().system().eventStream().subscribe(self(), DeadLetter.class);
+		taskExecuter = context().actorOf(Props.create(TaskExecuter.class));
+		context().watch(taskExecuter);
 
 		context().setReceiveTimeout(Duration.create(120, TimeUnit.SECONDS));
 	}
@@ -53,13 +44,6 @@ public class QueueActor extends UntypedPersistentActor {
 		// }
 	}
 
-	private ActorRef sendTask(Task task) {
-		ActorRef actor = context().actorOf(Props.create(TaskManager.class, router));
-		context().watch(actor);
-		actor.tell(task, getSelf());
-		return actor;
-	}
-
 	@Override
 	public void onReceiveCommand(Object arg0) throws Exception {
 		if (arg0 instanceof Task) {
@@ -67,29 +51,25 @@ public class QueueActor extends UntypedPersistentActor {
 			persist((Task) arg0, new Procedure<Task>() {
 				@Override
 				public void apply(Task arg0) throws Exception {
-					taskQueue.offer((Task) arg0);
+					taskList.offer((Task) arg0);
 					if (currentTask == null) {
-						currentTask = taskQueue.poll();
-						sendTask(currentTask);
+						currentTask = taskList.poll();
+						taskExecuter.tell(currentTask, getSelf());
 					}
 				}
 			});
-			if (taskQueue.size() % 10 == 0) {
-				saveSnapshot(taskQueue);
+			if (taskList.size() % 10 == 0) {
+				saveSnapshot(taskList);
 			}
-			masterRef = getSender();
+
 		} else if (arg0 instanceof TaskDone) {
-			currentTask = taskQueue.poll();
+			currentTask = taskList.poll();
 			if (currentTask != null) {
-				sendTask(currentTask);
-			} else {
-				// kill task manager
+				taskExecuter.tell(currentTask, getSelf());
 			}
-			masterRef.tell(arg0, getSelf());
-			System.out.println("Task Done! " + ((TaskDone) arg0).task);
 
 		} else if (arg0 instanceof RetryTask) {
-			sendTask(((RetryTask) arg0).task);
+			taskExecuter.tell(((RetryTask) arg0).task, getSelf());
 			System.out.println("[RetryTask] Retry send message: " + ((RetryTask) arg0).task);
 
 		} else if (arg0 instanceof ReceiveTimeout) {
@@ -97,7 +77,11 @@ public class QueueActor extends UntypedPersistentActor {
 			System.out.println("[ReceiveTimeout] Stop Actor!");
 
 		} else if (arg0 instanceof Terminated) {
-			((Terminated) arg0).getActor();
+			if (taskExecuter.equals(((Terminated) arg0).getActor())) {
+				taskExecuter = context().actorOf(Props.create(TaskExecuter.class));
+				context().watch(taskExecuter);
+				taskExecuter.tell(currentTask, getSelf());
+			}
 
 		} else if (arg0 instanceof SaveSnapshotSuccess) {
 			deleteMessages(((SaveSnapshotSuccess) arg0).metadata().sequenceNr(), false);
@@ -107,24 +91,6 @@ public class QueueActor extends UntypedPersistentActor {
 	@Override
 	public void postStop() {
 		super.postStop();
-	}
-
-	/**
-	 * 
-	 */
-	protected ActorRef getActorRef(Class<?> clazz, String actorPath, String actorName, String dispatcher) {
-		try {
-			ActorSelection actorSelection = context().system().actorSelection(actorPath);
-			return Await.result(actorSelection.resolveOne(Duration.create(10000, TimeUnit.MILLISECONDS)),
-					Duration.create(10000, TimeUnit.MILLISECONDS));
-		} catch (Exception e) {
-			try {
-				return context().system().actorOf(Props.create(clazz).withDispatcher(dispatcher), actorName);
-			} catch (Exception e2) {
-				System.err.println(e2.getMessage());
-				return null;
-			}
-		}
 	}
 
 }
