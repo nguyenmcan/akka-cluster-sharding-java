@@ -12,6 +12,7 @@ import akka.actor.ReceiveTimeout;
 import akka.actor.Terminated;
 import akka.japi.Procedure;
 import akka.persistence.SaveSnapshotSuccess;
+import akka.persistence.SnapshotOffer;
 import akka.persistence.UntypedPersistentActor;
 
 public class TaskManager extends UntypedPersistentActor {
@@ -36,12 +37,13 @@ public class TaskManager extends UntypedPersistentActor {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onReceiveRecover(Object arg0) throws Exception {
-		// if (arg0 instanceof Task) {
-		// taskQueue.offer((Task) arg0);
-		// } else if (arg0 instanceof SnapshotOffer) {
-		// taskQueue = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
-		// }
+		if (arg0 instanceof Task) {
+			taskList.offer((Task) arg0);
+		} else if (arg0 instanceof SnapshotOffer) {
+			taskList = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
+		}
 	}
 
 	@Override
