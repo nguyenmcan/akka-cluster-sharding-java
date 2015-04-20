@@ -30,7 +30,6 @@ public class Worker extends UntypedActor {
 	@Override
 	public void postStop() throws Exception {
 		super.postStop();
-		System.out.println(">>>>>>>>>>>>>>>postStop!");
 	}
 
 }

@@ -10,10 +10,4 @@ lazy val root = (project in file(".")).
 			"io.kamon" %% "kamon-system-metrics" % "0.3.5",
 			"org.aspectj" % "aspectjweaver" % "1.8.4"
 		)
-	) 
-
-aspectjSettings
-
-javaOptions <++= AspectjKeys.weaverOptions in Aspectj
-
-fork in run := true
+	)

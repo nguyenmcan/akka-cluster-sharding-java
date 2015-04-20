@@ -38,6 +38,7 @@ public class TaskExecuter extends UntypedActor {
 
 		} else if (arg0 instanceof ReceiveTimeout) {
 			this.master.tell(new RetryTask(currentTask), getSelf());  // refresh master
+			System.out.println("[ReceiveTimeout] Retry send message: " + currentTask);
 
 		} else if (arg0 instanceof DeadLetter) {
 			if (((DeadLetter) arg0).message() == currentTask) {

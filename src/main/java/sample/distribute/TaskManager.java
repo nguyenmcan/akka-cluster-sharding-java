@@ -67,6 +67,7 @@ public class TaskManager extends UntypedPersistentActor {
 			if (currentTask != null) {
 				taskExecuter.tell(currentTask, getSelf());
 			}
+			System.out.println("Task Done! " + ((TaskDone) arg0).task);
 
 		} else if (arg0 instanceof RetryTask) {
 			taskExecuter.tell(((RetryTask) arg0).task, getSelf());
