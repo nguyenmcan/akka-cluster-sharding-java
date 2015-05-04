@@ -37,19 +37,19 @@ public class TaskManager extends UntypedPersistentActor {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	public void onReceiveRecover(Object arg0) throws Exception {
 		if (arg0 instanceof Task) {
-			taskList.offer((Task) arg0);
+//			taskList.offer((Task) arg0);
 		} else if (arg0 instanceof SnapshotOffer) {
-			taskList = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
+//			taskList = (Queue<Task>) ((SnapshotOffer) arg0).snapshot();
 		}
 	}
 
 	@Override
 	public void onReceiveCommand(Object arg0) throws Exception {
 		if (arg0 instanceof Task) {
-			System.out.println("Receive Task! " + self().path());
+			System.out.println("Receive Task! " + arg0);
 			persist((Task) arg0, new Procedure<Task>() {
 				@Override
 				public void apply(Task arg0) throws Exception {

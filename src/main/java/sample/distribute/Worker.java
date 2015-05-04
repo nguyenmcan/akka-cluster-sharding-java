@@ -14,7 +14,7 @@ public class Worker extends UntypedActor {
 		if (arg0 instanceof Task) {
 			try {
 				if(((Task) arg0).isTimeOut()) {
-					// message timeout
+					System.out.println("Message Timeout!");
 					return;
 				}
 				System.out.println("Proccess: " + arg0 + " (" + self().path() + ")");

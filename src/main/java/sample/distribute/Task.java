@@ -8,24 +8,28 @@ import akka.routing.ConsistentHashingRouter.ConsistentHashable;
 public class Task implements Serializable, ConsistentHashable {
 	private static final long serialVersionUID = 7782231832542116756L;
 
-	private final String id;
-	private final int count;
-	private final long send_time;
+	private String id;
+	private int count;
+	private long send_time;
 
 	public Task(String id, int count) {
-		this.id = id;
-		this.count = count;
-		this.send_time = System.currentTimeMillis();
+		this.setId(id);
+		this.setCount(count);
+		this.setSend_time(System.currentTimeMillis());
 	}
 
 	@Override
 	public String toString() {
-		return "[Task:" + getId() + ":" + count + "]";
+		return "[Task:" + getId() + ":" + getCount() + "]" + super.toString();
+	}
+
+	public void resetTimeOut() {
+		this.setSend_time(System.currentTimeMillis());
 	}
 
 	public boolean isTimeOut() {
-		return System.currentTimeMillis() - send_time > 60 * 1000; // time-out 1
-																	// minutes
+		// time-out after one minute
+		return (System.currentTimeMillis() - getSend_time()) > (60 * 1000);
 	}
 
 	@Override
@@ -39,6 +43,22 @@ public class Task implements Serializable, ConsistentHashable {
 
 	public long getSend_time() {
 		return send_time;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public void setSend_time(long send_time) {
+		this.send_time = send_time;
 	}
 
 }

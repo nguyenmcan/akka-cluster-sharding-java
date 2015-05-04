@@ -46,7 +46,7 @@ public class TaskProducer extends AbstractActor {
 			ActorRef actorRef = getActorRef(TaskManager.class, "/user/producer-manager/producer/" + id, id, "dedicator-dispatcher");
 			Task task = new Task(id, counter.incrementAndGet());
 			actorRef.tell(task, getSelf());
-			System.out.println(">>> Push: " + task + " (" + self().path() + " )");
+			System.out.println(">>> Push: " + task);
 		}
 	}
 

@@ -24,7 +24,7 @@ public class TaskExecuter extends UntypedActor {
 	public void preStart() throws Exception {
 		router = getActorRef(Worker.class, "/user/router1", "router1", "router-dispatcher");
 		
-		context().setReceiveTimeout(Duration.create(60, TimeUnit.SECONDS));
+		context().setReceiveTimeout(Duration.create(20, TimeUnit.SECONDS));
 		
 		context().system().eventStream().subscribe(self(), DeadLetter.class);
 	}
@@ -37,6 +37,7 @@ public class TaskExecuter extends UntypedActor {
 			router.tell(currentTask, sender()); // send TaskDone message directly to master
 
 		} else if (arg0 instanceof ReceiveTimeout) {
+			currentTask.resetTimeOut();
 			this.master.tell(new RetryTask(currentTask), getSelf());  // refresh master
 			System.out.println("[ReceiveTimeout] Retry send message: " + currentTask);
 
